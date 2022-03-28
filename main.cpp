@@ -5,7 +5,7 @@ using namespace std;
 
 
 struct carte{
-  string Symbole;
+  string symbole;
   string num;
 };
 
@@ -21,19 +21,19 @@ void fill_deck(Paquet **p){
 			carte * add = new carte;
 			if(i==0){
 		        add->num = to_string(j);
-				add->Symbole = "Pic";
+				add->symbole = "Pic";
 			}
 			else if(i==1){
 				add->num = to_string(j);
-				add->Symbole = "Coeur";
+				add->symbole = "Coeur";
 			}
 			else if(i==2){
 				add->num = to_string(j);
-				add->Symbole = "Trefle";
+				add->symbole = "Trefle";
 			}
 			else if(i==3){
 				add->num = to_string(j);
-				add->Symbole = "Carreau";
+				add->symbole = "Carreau";
 			}
 			(*p)->c[cpt] = add;
 			cpt++;
@@ -66,24 +66,39 @@ void format_names(Paquet **p){
 void print_5_rand(Paquet *p){
   for(int i=0; i<5; i++){
     int a = rand()%52 +1;
-    cout << "Carte : " << a << " Numéro : " << p->c[a]->num << " Symbole : " << p->c[a]->Symbole << endl;
+    cout << "Carte : " << a << " Numéro : " << p->c[a]->num << " Symbole : " << p->c[a]->symbole << endl;
   }
 }
 
-void shuffle(Paquet *p){//ajouter des cartes
-  for(int i=0; i<52; i++){
+void shuffle(Paquet *p, int coeff){
+  for(int i=0; i<coeff; i++){
     carte *tmp;
-    int a = rand()%52 +1;
-    int b = rand()%52 +1;
+    int a = rand()%51 +1;
+    int b = rand()%51 +1;
     tmp = p->c[a];    
     p->c[a] = p->c[b];
-    p->c[b] = p->c[a];
+    p->c[b] = tmp;
   }
+}
+
+void print_deck(Paquet p){
+	for(int i=0; i<52; i++){
+		cout << "Carte : " << i << " Numéro : " << p.c[i]->num << " Symbole : " << p.c[i]->symbole << endl;
+	}
 }
 
 void test_shuffle(Paquet p){
-//là où on va tester les cartes pour les stats, savoir si deux cartes de même symbole se suivent, savoir si 4 cartes de même symbole se suivent
-  
+	int cpt = 0;
+	string prev_symb = p.c[0]->symbole;
+
+	for(int i=1; i<52; i++){
+		if(p.c[i]->symbole == prev_symb){
+			cpt++;
+		}
+		prev_symb = p.c[i]->symbole;
+	}
+
+	cout << "Le nombre de cartes qui possèdent un symbole identique et qui se suivent est : " << cpt << endl;
 }
 
 int main() {
@@ -91,15 +106,12 @@ int main() {
 	Paquet *p = new Paquet;
 
 	fill_deck(&p);
-	
-	cout << p->c[51]->num << " de " << p->c[51]->Symbole << endl;
-
 	format_names(&p);
-
-	cout << p->c[51]->num << " de " << p->c[51]->Symbole << endl;
-		
+	//print_deck(*p);
+	test_shuffle(*p);
 	
-	//shuffle(p);
-	
-	print_5_rand(p);
+	shuffle(p, 52);
+	print_deck(*p);
+	test_shuffle(*p);
 }
+
