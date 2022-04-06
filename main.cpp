@@ -65,7 +65,7 @@ void format_names(Paquet **p){
 
 void print_5_rand(Paquet *p){
   for(int i=0; i<5; i++){
-    int a = rand()%52 +1;
+    int a = rand()%52;
     cout << "Carte : " << a << " Numéro : " << p->c[a]->num << " Symbole : " << p->c[a]->symbole << endl;
   }
 }
@@ -73,8 +73,8 @@ void print_5_rand(Paquet *p){
 void shuffle(Paquet *p, int coeff){
   for(int i=0; i<coeff; i++){
     carte *tmp;
-    int a = rand()%51 +1;
-    int b = rand()%51 +1;
+    int a = rand()%52;
+    int b = rand()%52; 
     tmp = p->c[a];    
     p->c[a] = p->c[b];
     p->c[b] = tmp;
@@ -89,16 +89,35 @@ void print_deck(Paquet p){
 
 void test_shuffle(Paquet p){
 	int cpt = 0;
+	int cpt2 = 0;
 	string prev_symb = p.c[0]->symbole;
-
+	string prev_num = p.c[0]->num;
+	
 	for(int i=1; i<52; i++){
 		if(p.c[i]->symbole == prev_symb){
 			cpt++;
+			if(prev_num == "Valet" || prev_num == "Dame" || prev_num == "Roi" || prev_num == "As" || p.c[i]->num == "As" || p.c[i]->num == "Valet" || p.c[i]->num == "Dame" || p.c[i]->num == "Roi"){
+				if(prev_num == "As" || p.c[i]->num == "As"){
+					if(p.c[i]->num == to_string(2)) cpt2++;
+				}
+				if(prev_num == "Valet" || p.c[i]->num == "Valet"){
+					if(p.c[i]->num == "Dame") cpt2++;
+				}
+				else if(prev_num == "Dame" || p.c[i]->num == "Dame"){
+					if(p.c[i]->num == "Roi") cpt2++;
+				} 
+				else if(prev_num == "Roi" || p.c[i]->num == "Roi"){
+					if(p.c[i]->num == "As") cpt2++;
+				}
+			}
+			else if(p.c[i]->num == to_string(std::stoi(prev_num) +1)) cpt2++;
 		}
 		prev_symb = p.c[i]->symbole;
+		prev_num = p.c[i]->num;
 	}
 
-	cout << "Le nombre de cartes qui possèdent un symbole identique et qui se suivent est : " << cpt << endl;
+	cout << "Le nombre de cartes qui se suivent et qui possèdent un symbole identique est : " << cpt << endl;
+	cout << "Compris dans ce nombre, le nombre de cartes qui se suivent, qui possèdent un symbole identique et dont les chiffres sont liés par addition de 1 avec la suivante : " << cpt2 << endl;
 }
 
 int main() {
@@ -114,4 +133,3 @@ int main() {
 	print_deck(*p);
 	test_shuffle(*p);
 }
-
